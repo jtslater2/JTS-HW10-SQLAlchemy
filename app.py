@@ -38,6 +38,7 @@ def welcome():
     return (
         f"Available Routes:<br/>"
         f"/api/v1.0/precipitation<br/>"
+        f"/api/v1.0/stations<br/>"
         f"/api/v1.0/tobs<br/>"
         f"/api/v1.0/<start><br/>"
         f"/api/v1.0/<start>/<end>"
@@ -45,7 +46,7 @@ def welcome():
 
 
 @app.route("/api/v1.0/precipitation")
-def precipitation():
+def prec():
     # Create our session (link) from Python to the DB
     session = Session(engine)
 
@@ -60,6 +61,28 @@ def precipitation():
 
     return jsonify(all_names)
 
+
+@app.route("/api/v1.0/tobs")
+def stations():
+    # Create our session (link) from Python to the DB
+    session = Session(engine)
+
+    """Return a list of staions"""
+    # Query all 
+    results = session.query(Passenger.name, Passenger.age, Passenger.sex).all()
+
+    session.close()
+
+    # Create a dictionary from the row data and append to a list of all_passengers
+    all_passengers = []
+    for name, age, sex in results:
+        passenger_dict = {}
+        passenger_dict["name"] = name
+        passenger_dict["age"] = age
+        passenger_dict["sex"] = sex
+        all_passengers.append(passenger_dict)
+
+    return jsonify(all_passengers)
 
 @app.route("/api/v1.0/tobs")
 def tobs():
@@ -82,6 +105,8 @@ def tobs():
         all_passengers.append(passenger_dict)
 
     return jsonify(all_passengers)
+
+
 
 
 if __name__ == '__main__':
